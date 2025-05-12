@@ -1,39 +1,22 @@
 version: '3.8'
 services:
   n8n:
-    image: docker.n8n.io/n8nio/n8n:1.83.2
+    build:
+      context: .
     restart: always
-    environment:
-      - N8N_HOST=${N8N_HOST}
-      - N8N_PORT=${N8N_PORT}
-      - N8N_PROTOCOL=http
-      - NODE_ENV=production
-      - WEBHOOK_URL=https://${N8N_HOST}/
-      - GENERIC_TIMEZONE=${GENERIC_TIMEZONE}
-      - N8N_SECURE_COOKIE=false
+    env_file:
+      - .env
     volumes:
-      - n8n_data-n8n-n8n-ytwh6f:/home/node/.n8n
+      - n8n_data:/home/node/.n8n
     networks:
-      - n8n-n8n-ytwh6f
-    labels:
-      - traefik.http.routers.n8n-n8n-ytwh6f-2-web.rule=Host(`amin-n8n.masihmoloodian.com`)
-      - traefik.http.routers.n8n-n8n-ytwh6f-2-web.entrypoints=web
-      - traefik.http.services.n8n-n8n-ytwh6f-2-web.loadbalancer.server.port=5678
-      - traefik.http.routers.n8n-n8n-ytwh6f-2-web.service=n8n-n8n-ytwh6f-2-web
-      - traefik.http.routers.n8n-n8n-ytwh6f-1-web.rule=Host(`n8n-n8n-518478-65-109-193-96.traefik.me`)
-      - traefik.http.routers.n8n-n8n-ytwh6f-1-web.entrypoints=web
-      - traefik.http.services.n8n-n8n-ytwh6f-1-web.loadbalancer.server.port=5678
-      - traefik.http.routers.n8n-n8n-ytwh6f-1-web.service=n8n-n8n-ytwh6f-1-web
-      - traefik.http.routers.n8n-n8n-ytwh6f-1-web.middlewares=redirect-to-https@file
-      - traefik.http.routers.n8n-n8n-ytwh6f-1-websecure.rule=Host(`n8n-n8n-518478-65-109-193-96.traefik.me`)
-      - traefik.http.routers.n8n-n8n-ytwh6f-1-websecure.entrypoints=websecure
-      - traefik.http.services.n8n-n8n-ytwh6f-1-websecure.loadbalancer.server.port=5678
-      - traefik.http.routers.n8n-n8n-ytwh6f-1-websecure.service=n8n-n8n-ytwh6f-1-websecure
-      - traefik.http.routers.n8n-n8n-ytwh6f-1-websecure.tls.certresolver=letsencrypt
-      - traefik.enable=true
-volumes:
-  n8n_data-n8n-n8n-ytwh6f: null
+      - n8n-network
+    ports:
+      - "5678:5678"
+
 networks:
-  n8n-n8n-ytwh6f:
-    name: n8n-n8n-ytwh6f
-    external: true
+  n8n-network:
+    name: n8n-network
+
+volumes:
+  n8n_data:
+    name: n8n_data

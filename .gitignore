@@ -1,0 +1,6 @@
+.env
+config
+node_modules
+database.sqlite
+*.log
+*.journal
